@@ -40,7 +40,7 @@ class PipelineStack(Stack):
                 install_command="pipeline/bin/install.sh",
                 # build_command="python -m unittest test/test_*",
                 synth_command="cdk synth",
-                copy_environment_variables=["GITHUB_TOKEN"]
+                #copy_environment_variables=["GITHUB_TOKEN"]
             )
         )
 
@@ -48,7 +48,7 @@ class PipelineStack(Stack):
         # Account and region may be different from the pipeline's.
         test = ApplicationStage(
             self, 
-            'Testing',
+            'Test',
             env=Environment(
                 account="820872918044", 
                 region="us-west-1"
@@ -62,20 +62,12 @@ class PipelineStack(Stack):
         test_stage.add_actions(
             ShellScriptAction(
                 action_name='validate', 
-                commands=['curl -Ssf $ENDPOINT_URL/'],
+                commands=['curl -X POST -H "Content-Type: application/json" -d "{\"option\":\"date\",\"period\":\"today\"}" $ENDPOINT_URL/'],
                 use_outputs=dict(
                     ENDPOINT_URL=pipeline.stack_output(
                         test.gateway_url
                     )
                 )
-            )
-        )
-
-        test_stage.add_actions(
-            ShellScriptAction(
-                action_name='integration', 
-                commands=['python -m unittest test/test_*'],
-                additional_artifacts=[source_artifact]
             )
         )
 
@@ -96,19 +88,11 @@ class PipelineStack(Stack):
         prod_stage.add_actions(
             ShellScriptAction(
                 action_name='validate', 
-                commands=['curl -Ssf $ENDPOINT_URL/container'],
+                commands=['curl -X POST -H "Content-Type: application/json" -d "{\"option\":\"date\",\"period\":\"today\"}" $ENDPOINT_URL/container'],
                 use_outputs=dict(
                     ENDPOINT_URL=pipeline.stack_output(
                         prod.gateway_url
                     )
                 )
-            )
-        )
-
-        prod_stage.add_actions(
-            ShellScriptAction(
-                action_name='integration', 
-                commands=['python -m unittest test/test_*'],
-                additional_artifacts=[source_artifact]
             )
         )
