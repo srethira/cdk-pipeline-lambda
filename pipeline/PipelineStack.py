@@ -69,7 +69,7 @@ class PipelineStack(Stack):
         test_stage.add_actions(
             ShellScriptAction(
                 action_name='validate', 
-                commands=['curl -Ssf $ENDPOINT_URL/'],
+                commands=['curl -X POST -H "Content-Type: application/json" -d "{\"option\":\"date\",\"period\":\"today\"}" $ENDPOINT_URL/'],
                 use_outputs=dict(
                     ENDPOINT_URL=pipeline.stack_output(
                         test.gateway_url
@@ -95,7 +95,7 @@ class PipelineStack(Stack):
         prod_stage.add_actions(
             ShellScriptAction(
                 action_name='validate', 
-                commands=['curl -Ssf $ENDPOINT_URL/container'],
+                commands=['curl -X POST -H "Content-Type: application/json" -d "{\"option\":\"date\",\"period\":\"today\"}" $ENDPOINT_URL/container'],
                 use_outputs=dict(
                     ENDPOINT_URL=pipeline.stack_output(
                         prod.gateway_url
