@@ -11,7 +11,7 @@ class ApplicationStage(Stage):
 
         app_stack = ApplicationStack(
             self, 
-            "ApplicationStack",
+            "LambdaApplicationStack",
             env=env
         )
 
