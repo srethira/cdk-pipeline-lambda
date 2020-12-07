@@ -21,8 +21,8 @@ class PipelineStack(Stack):
 
         pipeline = CdkPipeline(
             self, 
-            "Pipeline",
-            pipeline_name="MyAppPipeline",
+            "LambdaPipeline",
+            pipeline_name="MyLambdaPipeline",
             cloud_assembly_artifact=cloud_assembly_artifact,
             source_action=codepipeline_actions.GitHubSourceAction(
                 action_name="GitHub",
@@ -32,7 +32,7 @@ class PipelineStack(Stack):
                 ),
                 trigger=codepipeline_actions.GitHubTrigger.POLL,
                 owner="srethira",
-                repo="cdk-pipeline-ecs",
+                repo="cdk-pipeline-lambda",
                 branch="master"
             ),
             # Current limitation: generate CodeBuild reports within @aws-cdk/cdk-pipelines
@@ -55,7 +55,7 @@ class PipelineStack(Stack):
         # Account and region may be different from the pipeline's.
         test = ApplicationStage(
             self, 
-            'Testing',
+            'TestingContainer',
             env=Environment(
                 account="462864815626", 
                 region="us-west-1"
@@ -89,7 +89,7 @@ class PipelineStack(Stack):
         # Do this as many times as necessary with any account and region for prod
         prod = ApplicationStage(
             self, 
-            'Prod',
+            'ProductionContainer',
             env=Environment(
                 account="462864815626", 
                 region="us-west-2"
