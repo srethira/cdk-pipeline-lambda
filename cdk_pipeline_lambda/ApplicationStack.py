@@ -124,14 +124,14 @@ class ApplicationStack(core.Stack):
         # create a cloudwatch alarm based on the lambda erros metrics
         alarm = cloudwatch.Alarm(
             self, 
-            "CanaryAlarm",
+            "LambdaCanaryAlarm",
             metric=my_datetime_lambda.current_version.metric_invocations(),
             threshold=0,
             evaluation_periods=2,
             datapoints_to_alarm=2,
             treat_missing_data=cloudwatch.TreatMissingData.IGNORE,
             period=core.Duration.minutes(5),
-            alarm_name="CanaryAlarm"
+            alarm_name="LambdaCanaryAlarm"
         )
 
         codedeploy.LambdaDeploymentGroup(
