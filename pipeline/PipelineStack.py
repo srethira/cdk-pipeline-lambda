@@ -33,7 +33,7 @@ class PipelineStack(Stack):
                 trigger=codepipeline_actions.GitHubTrigger.POLL,
                 owner="srethira",
                 repo="cdk-pipeline-lambda",
-                branch="master"
+                branch="main"
             ),
             # Current limitation: generate CodeBuild reports within @aws-cdk/cdk-pipelines
             # https://github.com/aws/aws-cdk/issues/10464
@@ -45,7 +45,7 @@ class PipelineStack(Stack):
                     privileged=True
                 ),
                 install_command="pipeline/bin/install.sh",
-                build_command="python -m unittest test/test_*",
+                # build_command="python -m unittest test/test_*",
                 synth_command="cdk synth",
                 copy_environment_variables=["GITHUB_TOKEN"]
             )
@@ -55,7 +55,7 @@ class PipelineStack(Stack):
         # Account and region may be different from the pipeline's.
         test = ApplicationStage(
             self, 
-            'TestingContainer',
+            'Test',
             env=Environment(
                 account="462864815626", 
                 region="us-west-1"
@@ -89,7 +89,7 @@ class PipelineStack(Stack):
         # Do this as many times as necessary with any account and region for prod
         prod = ApplicationStage(
             self, 
-            'ProductionContainer',
+            'Prod',
             env=Environment(
                 account="462864815626", 
                 region="us-west-2"
