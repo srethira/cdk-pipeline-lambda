@@ -78,14 +78,6 @@ class PipelineStack(Stack):
             )
         )
 
-        test_stage.add_actions(
-            ShellScriptAction(
-                action_name='integration', 
-                commands=['python -m unittest test/test_*'],
-                additional_artifacts=[source_artifact]
-            )
-        )
-
         # Do this as many times as necessary with any account and region for prod
         prod = ApplicationStage(
             self, 
@@ -109,13 +101,5 @@ class PipelineStack(Stack):
                         prod.gateway_url
                     )
                 )
-            )
-        )
-
-        prod_stage.add_actions(
-            ShellScriptAction(
-                action_name='integration', 
-                commands=['python -m unittest test/test_*'],
-                additional_artifacts=[source_artifact]
             )
         )
