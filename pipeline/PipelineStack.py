@@ -4,39 +4,31 @@ from ApplicationStage import ApplicationStage
 
 import aws_cdk.aws_codepipeline as codepipeline
 import aws_cdk.aws_codepipeline_actions as codepipeline_actions
+import aws_cdk.aws_codecommit as codecommit
 import os
 
 
 # Stack to hold the pipeline
-#
 class PipelineStack(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
+        repo = codecommit.Repository.from_repository_name(self, "ImportedRepo", "cdk-pipeline-demo")
         test_account = self.node.try_get_context("testAccount")
         prod_account = self.node.try_get_context("prodAccount")
 
         source_artifact = codepipeline.Artifact()
         cloud_assembly_artifact = codepipeline.Artifact()
-
-        github_token_secret_name = os.getenv('GITHUB_TOKEN', 'my-github-token')
-
         pipeline = CdkPipeline(
             self, 
             "LambdaPipeline",
             pipeline_name="MyLambdaPipeline",
             cloud_assembly_artifact=cloud_assembly_artifact,
-            source_action=codepipeline_actions.GitHubSourceAction(
-                action_name="GitHub",
-                output=source_artifact,
-                oauth_token=SecretValue.secrets_manager(
-                    github_token_secret_name
-                ),
-                trigger=codepipeline_actions.GitHubTrigger.POLL,
-                owner="srethira",
-                repo="cdk-pipeline-lambda",
-                branch="main"
+            source_action=codepipeline_actions.CodeCommitSourceAction(
+                action_name="CodeCommit",
+                repository=repo,
+                output=source_artifact
             ),
             # Current limitation: generate CodeBuild reports within @aws-cdk/cdk-pipelines
             # https://github.com/aws/aws-cdk/issues/10464
@@ -48,9 +40,7 @@ class PipelineStack(Stack):
                     privileged=True
                 ),
                 install_command="pipeline/bin/install.sh",
-                # build_command="python -m unittest test/test_*",
                 synth_command="cdk synth",
-                copy_environment_variables=["GITHUB_TOKEN"]
             )
         )
 
