@@ -27,15 +27,18 @@ This artifact is needed two AWS Accounts, one is to provision Pipeline Infrastrc
 | lambda                                      | Application Code |
 
 # Pre-reqs:
-1. Get CDK Installed and Configure AWS Credentials : [install-cdk link] (https://docs.aws.amazon.com/cdk/latest/guide/cli.html) 
-2. Bootstrapping your environments : [General-Information link] (https://docs.aws.amazon.com/cdk/latest/guide/cli.html#cli-bootstrap)
-   `env CDK_NEW_BOOTSTRAP=1 npx cdk bootstrap \
+1. Get CDK Installed and Configure AWS Credentials : [install-cdk link](https://docs.aws.amazon.com/cdk/latest/guide/cli.html) 
+2. Bootstrapping your environments : [General-Information link](https://docs.aws.amazon.com/cdk/latest/guide/cli.html#cli-bootstrap)
+   ```
+   env CDK_NEW_BOOTSTRAP=1 npx cdk bootstrap \
     --profile default \
     --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
     --trust <<ApplicationProvisionAWSAccount#>> \
-    aws://<<PipelineProvisionAWSAccount#>>/us-west-1`
+    aws://<<PipelineProvisionAWSAccount#>>/us-west-1
+
+    ```
 3. It is expected to have a CodeCommit Repo, if not please create one and checkout the repo.
-4. Clone repo: [link] (https://gitlab.aws.dev/proserve-ussdt-devops/cdk-pipeline-lambda)
+4. Clone repo: [link](https://gitlab.aws.dev/proserve-ussdt-devops/cdk-pipeline-lambda)
 5. Checkout cdk-pipeline-lambda and copy the contents to CodeCommit Repo (Ref: Step3)
 6. Open `cdk.json` and update the following: 
    1. account:`<<pipelineProvisionAWSAccount#>>` from line# 8
@@ -96,8 +99,8 @@ This artifact is needed two AWS Accounts, one is to provision Pipeline Infrastrc
     command.
 
 # Provision pipelines
-1. Execute `cdk deploy -All`, you should be receving few [y/n] prompts, please proveed with [y].
-2. If everything goes well, you should be able to see the pipelines in Pipelines Provision AWS Account.
+1. Execute `cdk deploy -All`, you should be receiving few [y/n] prompts, please proceed with [y].
+2. If everything goes well, you should be able to see the pipelines in `Pipelines Provision AWS Account`.
 
 ## Useful commands
 
