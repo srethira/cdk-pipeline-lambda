@@ -9,7 +9,6 @@ import os
 
 
 # Stack to hold the pipeline
-#
 class PipelineStack(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
@@ -41,9 +40,7 @@ class PipelineStack(Stack):
                     privileged=True
                 ),
                 install_command="pipeline/bin/install.sh",
-                # build_command="python -m unittest test/test_*",
                 synth_command="cdk synth",
-                #copy_environment_variables=["GITHUB_TOKEN"]
             )
         )
 
