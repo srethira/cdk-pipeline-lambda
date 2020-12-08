@@ -23,10 +23,6 @@ class ApplicationStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        env = kwargs['env']
-
-        work_dir = pathlib.Path(__file__).parents[1]
-
         # myDateTimeFunction lambda function
         my_datetime_lambda = _lambda.Function(
             self, 
@@ -48,105 +44,13 @@ class ApplicationStack(core.Stack):
             )
         )
 
-        # beforeAllowTraffic lambda function
-        pre_traffic_lambda = _lambda.Function(
-            self, 
-            "pre-traffic",
-            runtime=_lambda.Runtime.NODEJS_12_X,
-            handler="beforeAllowTraffic.handler",
-            code=_lambda.Code.asset(
-                "./lambda"
-            ),
-            environment=dict(
-                NewVersion=my_datetime_lambda.current_version.function_arn
-            )
-        )
-
-        pre_traffic_lambda.add_to_role_policy(
-            iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["codedeploy:PutLifecycleEventHookExecutionStatus"],
-                resources=["*"]
-            )
-        )
-
-        pre_traffic_lambda.add_to_role_policy(
-            iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["lambda:InvokeFunction"],
-                resources=["*"]
-            )
-        )
-
-        # afterAllowTraffic lambda function
-        post_traffic_lambda = _lambda.Function(
-            self, 
-            "post-traffic",
-            runtime=_lambda.Runtime.NODEJS_12_X,
-            handler="afterAllowTraffic.handler",
-            code=_lambda.Code.asset(
-                "./lambda"
-            ),
-            environment=dict(
-                NewVersion=my_datetime_lambda.current_version.function_arn
-            )
-        )
-
-        post_traffic_lambda.add_to_role_policy(
-            iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["codedeploy:PutLifecycleEventHookExecutionStatus"],
-                resources=["*"]
-            )
-        )
-
-        post_traffic_lambda.add_to_role_policy(
-            iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["lambda:InvokeFunction"],
-                resources=["*"]
-            )
-        )
-
-        # create a cloudwatch event rule
-        events.Rule(
-            self, 
-            "CanaryRule",
-            schedule=events.Schedule.expression(
-                "rate(10 minutes)"
-            ),
-            targets=[events_targets.LambdaFunction(
-                my_datetime_lambda.current_version
-            )],
-
-        )
-
-        # create a cloudwatch alarm based on the lambda erros metrics
-        alarm = cloudwatch.Alarm(
-            self, 
-            "CanaryAlarm",
-            metric=my_datetime_lambda.current_version.metric_invocations(),
-            threshold=0,
-            evaluation_periods=2,
-            datapoints_to_alarm=2,
-            treat_missing_data=cloudwatch.TreatMissingData.IGNORE,
-            period=core.Duration.minutes(5),
-            alarm_name="CanaryAlarm"
-        )
-
         codedeploy.LambdaDeploymentGroup(
             self, 
             "datetime-lambda-deployment",
             alias=my_datetime_lambda.current_version.add_alias(
                 "live"
             ),
-            deployment_config=codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
-            alarms=[alarm],
-            auto_rollback=codedeploy.AutoRollbackConfig(
-                deployment_in_alarm=True
-            ),
-            pre_hook=pre_traffic_lambda,
-            post_hook=post_traffic_lambda
+            deployment_config=codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE
         )
 
         gw = _apigw.LambdaRestApi(

@@ -16,6 +16,9 @@ class PipelineStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         repo = codecommit.Repository.from_repository_name(self, "ImportedRepo", "cdk-pipeline-demo")
+        test_account = self.node.try_get_context("testAccount")
+        prod_account = self.node.try_get_context("prodAccount")
+
         source_artifact = codepipeline.Artifact()
         cloud_assembly_artifact = codepipeline.Artifact()
         pipeline = CdkPipeline(
@@ -50,9 +53,9 @@ class PipelineStack(Stack):
             self, 
             'Test',
             env=Environment(
-                account="820872918044", 
-                region="us-west-1"
-            )
+                account=test_account["account"], 
+                region=test_account["region"]
+            )    
         )
 
         test_stage = pipeline.add_application_stage(
@@ -76,8 +79,8 @@ class PipelineStack(Stack):
             self, 
             'Prod',
             env=Environment(
-                account="820872918044", 
-                region="us-west-2"
+                account=prod_account["account"], 
+                region=prod_account["region"]
             )
         )
 

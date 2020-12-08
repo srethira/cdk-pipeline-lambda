@@ -4,6 +4,18 @@
     "@aws-cdk/core:enableStackNameDuplicates": "true",
     "aws-cdk:enableDiffNoFail": "true",
     "@aws-cdk/core:stackRelativeExports": "true",
-    "@aws-cdk/core:newStyleStackSynthesis": "true"
+    "@aws-cdk/core:newStyleStackSynthesis": "true",
+    "sharedServiceAccount": {
+      "account":"462864815626",
+      "region":"us-west-2"
+    },
+    "testAccount": {
+      "account":"462864815626",
+      "region":"us-west-1"
+    },
+    "prodAccount": {
+      "account":"820872918044",
+      "region":"us-west-1"
+    }
   }
 }
