@@ -6,16 +6,16 @@
     "@aws-cdk/core:stackRelativeExports": "true",
     "@aws-cdk/core:newStyleStackSynthesis": "true",
     "sharedServiceAccount": {
-      "account":"462864815626",
-      "region":"us-west-2"
+      "account":"<<pipelineProvisionAWSAccount#>>",
+      "region":"us-east-1"
     },
     "testAccount": {
-      "account":"462864815626",
-      "region":"us-west-1"
+      "account":"<<prodAWSAccount#>>",
+      "region":"us-east-1"
     },
     "prodAccount": {
-      "account":"820872918044",
-      "region":"us-west-1"
+      "account":"<<prodAWSAccount#>>",
+      "region":"us-east-1"
     }
   }
 }
